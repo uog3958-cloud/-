@@ -1,0 +1,7 @@
+{
+  "name": "Fridge Chef (냉장고 셰프)",
+  "description": "냉장고 속 재료와 식사 시간대에 최적화된 맞춤형 요리 레시피 3가지를 제안하는 스마트 주방 어시스턴트입니다.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
