@@ -1,5 +1,5 @@
 
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import { MealTime, Ingredient, Recipe } from './types';
 import { generateRecipes } from './services/geminiService';
 import { RecipeCard } from './components/RecipeCard';
@@ -39,13 +39,12 @@ const App: React.FC = () => {
       const ingredientNames = ingredients.map(i => i.name);
       const result = await generateRecipes(ingredientNames, selectedMealTime);
       setRecipes(result.recipes);
-      // Scroll to results
       setTimeout(() => {
         document.getElementById('results')?.scrollIntoView({ behavior: 'smooth' });
       }, 100);
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      setError('레시피를 생성하는 중 오류가 발생했습니다. 다시 시도해 주세요.');
+      setError(err.message || '레시피를 생성하는 중 오류가 발생했습니다. Vercel 환경 변수(API_KEY) 설정을 확인해주세요.');
     } finally {
       setIsLoading(false);
     }
@@ -53,7 +52,6 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen pb-20">
-      {/* Header */}
       <header className="bg-white border-b border-slate-100 sticky top-0 z-10">
         <div className="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -69,7 +67,6 @@ const App: React.FC = () => {
       </header>
 
       <main className="max-w-4xl mx-auto px-4 mt-8 space-y-8">
-        {/* Step 1: Ingredients */}
         <section className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
           <div className="flex items-center gap-2 mb-6">
             <span className="w-8 h-8 rounded-full bg-slate-100 text-slate-800 flex items-center justify-center font-bold text-sm">1</span>
@@ -111,7 +108,6 @@ const App: React.FC = () => {
           </div>
         </section>
 
-        {/* Step 2: Meal Time */}
         <section className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
           <div className="flex items-center gap-2 mb-6">
             <span className="w-8 h-8 rounded-full bg-slate-100 text-slate-800 flex items-center justify-center font-bold text-sm">2</span>
@@ -139,7 +135,6 @@ const App: React.FC = () => {
           </div>
         </section>
 
-        {/* Action Button */}
         <button
           onClick={handleRecommend}
           disabled={isLoading || ingredients.length === 0}
@@ -158,26 +153,24 @@ const App: React.FC = () => {
           )}
         </button>
 
-        {/* Error State */}
         {error && (
-          <div className="bg-red-50 text-red-600 p-4 rounded-2xl text-center font-medium border border-red-100">
+          <div className="bg-red-50 text-red-600 p-6 rounded-2xl text-center font-medium border border-red-100">
+            <i className="fa-solid fa-circle-exclamation mb-2 text-2xl block"></i>
             {error}
           </div>
         )}
 
-        {/* Results */}
         {recipes.length > 0 && (
           <div id="results" className="space-y-6 pt-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
             <div className="flex items-center justify-between">
               <h2 className="text-2xl font-extrabold text-slate-800">추천 레시피</h2>
               <span className="text-sm text-slate-400 bg-slate-100 px-3 py-1 rounded-full">{selectedMealTime}에 딱 맞는 요리</span>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
+            <div className="grid grid-cols-1 gap-6">
               {recipes.map((recipe) => (
                 <RecipeCard key={recipe.id} recipe={recipe} />
               ))}
             </div>
-            
             <button 
               onClick={() => {
                 setRecipes([]);
@@ -192,7 +185,6 @@ const App: React.FC = () => {
         )}
       </main>
 
-      {/* Footer Decoration */}
       <footer className="mt-20 py-10 text-center border-t border-slate-100 bg-white">
         <p className="text-slate-400 text-sm">© 2024 Fridge Chef. AI Powered Recipes.</p>
       </footer>
